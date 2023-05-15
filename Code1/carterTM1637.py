@@ -80,12 +80,40 @@ def writeDisplay(myList):
     GPIO.output(pinDATA, GPIO.HIGH)
     shiftByte(__CMD_3 | 0x08 | 2)  # display cmd, display on, bightness
 
+# name:     intToCode
+# inputs:   value - integer to convert
+# outputs:  a byte value corresponding to the int
+# Notes:    converts int to a byte that will display said int on the 7seg
+def intToCode(value):
+    if value == 0:
+        return 0x3F
+    elif value == 1:
+        return 0x06
+    elif value == 2:
+        return 0x5B
+    elif value == 3:
+        return 0x4F
+    elif value == 4:
+        return 0x66
+    elif value == 5:
+        return 0x6D
+    elif value == 6:
+        return 0x7D
+    elif value == 7:
+        return 0x07
+    elif value == 8:
+        return 0x7F
+    elif value == 9:
+        return 0x6F
+
 # name:     displayInt
 # inputs:   value - integer to be displayed
 # outputs:  none
 # Notes:    displays integer to 7seg
 def displayInt(value):
     intBuff = [int(x) for x in str(value)]  # change value from int to a list of individual ints 1234->[1,2,3,4]
+    for index in range (4):
+        intBuff[index] = intToCode(intBuff[index])
     writeDisplay(intBuff)   # display the list
 
 # name:     clearScrn
@@ -102,6 +130,9 @@ def clearScrn():
 # Notes:    displays an integer and U/L 
 def dispUserInput(mode, value):
     bufferList = [int(x) for x in str(value)]  # change value from int to a list of individual ints 1234->[1,2,3,4]
+    for index in range (4):
+        bufferList[index] = intToCode(bufferList[index])
+        
     if (mode == 'U' or mode == 'u'):
         bufferList[0] = 0x3E    # left most digit is 'U'
     elif (mode == 'L' or mode == 'l'):
